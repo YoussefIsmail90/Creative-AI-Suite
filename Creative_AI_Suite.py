@@ -69,19 +69,35 @@ st.set_page_config(page_title="Creative AI Suite", page_icon="🎨", layout="wid
 st.title("🎨 Creative AI Suite")
 st.markdown("Unlock the power of AI for **image generation**, **story creation**, and **speech conversion**.")
 
-# Sidebar for options
-st.sidebar.header("Navigation")
-option = st.sidebar.selectbox("Choose an option:", [
-    "Create an Image and Story from Your Description",
-    "Interactive AI Chat",
-    "Convert Text to Speech",
-    "Generate an Image"
-])
+# Use session state to preserve the selected option
+if 'option' not in st.session_state:
+    st.session_state.option = None  # Initialize the option
+
+# Row layout for options
+st.header("Choose an option:")
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    if st.button("Create an Image and Story"):
+        st.session_state.option = "Create an Image and Story from Your Description"
+
+with col2:
+    if st.button("Interactive AI Chat"):
+        st.session_state.option = "Interactive AI Chat"
+
+with col3:
+    if st.button("Convert Text to Speech"):
+        st.session_state.option = "Convert Text to Speech"
+
+with col4:
+    if st.button("Generate an Image"):
+        st.session_state.option = "Generate an Image"
 
 # Add help tooltips to guide users
-st.sidebar.info("Select an option to interact with the AI tools.")
+st.info("Select an option to interact with the AI tools.")
 
-if option == "Create an Image and Story from Your Description":
+# Option handling
+if st.session_state.option == "Create an Image and Story from Your Description":
     st.subheader("🖼️ Create an Image and Story")
     st.markdown("Describe the image you want, and we'll generate it for you along with a creative story.")
     description_input = st.text_input("🔎 Describe the image you want:")
@@ -117,8 +133,7 @@ if option == "Create an Image and Story from Your Description":
         else:
             st.warning("Please provide a description to generate the image.")
 
-# Use tabs to better organize content in the main app
-elif option == "Interactive AI Chat":
+elif st.session_state.option == "Interactive AI Chat":
     st.subheader("🤖 Interactive AI Chat")
     st.markdown("Ask the AI any question, and it will respond with a creative answer.")
     user_input = st.text_input("💬 Enter your question or prompt:")
@@ -133,7 +148,7 @@ elif option == "Interactive AI Chat":
         else:
             st.warning("Please enter a prompt to get started!")
 
-elif option == "Generate an Image":
+elif st.session_state.option == "Generate an Image":
     st.subheader("🖼️ Generate an Image")
     st.markdown("Describe the image, and we will generate it for you.")
     image_description = st.text_input("🔎 Describe the image you want:")
@@ -146,7 +161,7 @@ elif option == "Generate an Image":
                     image = Image.open(io.BytesIO(generated_image))
                     st.image(image, caption="Generated Image", use_column_width=True)
 
-elif option == "Convert Text to Speech":
+elif st.session_state.option == "Convert Text to Speech":
     st.subheader("🔊 Convert Text to Speech")
     st.markdown("Enter text to convert it into natural-sounding speech.")
     text_to_convert = st.text_area("📝 Enter the text you want to convert to speech:")
