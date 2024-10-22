@@ -3,3 +3,4 @@ requests
 Pillow
 huggingface_hub
 gtts
+transformers
