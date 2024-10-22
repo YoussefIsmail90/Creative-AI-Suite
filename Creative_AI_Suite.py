@@ -14,6 +14,7 @@ api_key = st.secrets["huggingface"]["api_key"]
 blip_api_url = "https://api-inference.huggingface.co/models/nlpconnect/vit-gpt2-image-captioning"
 flux_api_url = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev"
 translation_api_url = "https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-en-ar"
+musicgen_api_url = "https://api-inference.huggingface.co/models/facebook/musicgen-small"
 headers = {"Authorization": f"Bearer {api_key}"}
 
 # Meta-Llama Chatbot
@@ -84,11 +85,21 @@ def translate_to_arabic(text):
         st.error(f"Translation error: {e}")
         return None
 
+# Function to generate music using MusicGen
+def generate_music(genre_input):
+    try:
+        response = requests.post(musicgen_api_url, headers=headers, json={"inputs": genre_input})
+        response.raise_for_status()  # Raise an error for bad responses
+        return response.content
+    except Exception as e:
+        st.error(f"Music generation error: {e}")
+        return None
+
 # Enhanced Streamlit UI
 st.set_page_config(page_title="Creative AI Suite", page_icon="🎨", layout="wide")
 
 st.title("🎨 Creative AI Suite")
-st.markdown("Unlock the power of AI for **image generation**, **story creation**, and **speech conversion**.")
+st.markdown("Unlock the power of AI for **image generation**, **story creation**, **music generation**, and **speech conversion**.")
 
 # Use session state to preserve the selected option
 if 'option' not in st.session_state:
@@ -96,7 +107,7 @@ if 'option' not in st.session_state:
 
 # Row layout for options
 st.header("Choose an option:")
-col1, col2, col3, col4, col5 = st.columns(5)
+col1, col2, col3, col4, col5, col6 = st.columns(6)
 
 with col1:
     if st.button("Create an Image and Story"):
@@ -117,6 +128,10 @@ with col4:
 with col5:
     if st.button("Translate to Arabic"):
         st.session_state.option = "Translate to Arabic"
+
+with col6:
+    if st.button("Generate Music"):
+        st.session_state.option = "Generate Music"
 
 # Add help tooltips to guide users
 st.info("Select an option to interact with the AI tools.")
@@ -151,7 +166,6 @@ if st.session_state.option == "Create an Image and Story from Your Description":
                             with st.spinner("🌍 Translating story to Arabic..."):
                                 arabic_translation = translate_to_arabic(story_script)
                             
-
                             if arabic_translation:
                                 st.markdown("### 🌍 Arabic Translation:")
                                 st.write(arabic_translation)
@@ -223,4 +237,18 @@ elif st.session_state.option == "Translate to Arabic":
                     st.markdown("### 🌍 Arabic Translation:")
                     st.write(arabic_translation)
         else:
-            st.warning("Please enter text to translate.")
+            st.warning("Please enter the text to translate.")
+
+elif st.session_state.option == "Generate Music":
+    st.subheader("🎵 Generate Music")
+    st.markdown("Enter a description of the music you want, and the AI will generate it for you.")
+    genre_description = st.text_input("🔎 Describe the music genre or vibe:")
+    
+    if st.button("Generate Music"):
+        if genre_description:
+            with st.spinner("🎵 Generating music..."):
+                generated_music = generate_music(genre_description)
+                if generated_music:
+                    st.audio(generated_music, format="audio/mp3")
+        else:
+            st.warning("Please provide a description to generate music.")
