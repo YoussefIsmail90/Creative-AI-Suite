@@ -164,44 +164,44 @@ if st.session_state.option == "Create an Image and Story from Your Description":
             st.warning("Please provide a description to generate the image.")  
 
 elif st.session_state.option == "Interactive AI Chat":
-    st.subheader("💬 Interactive AI Chat")
-    user_input = st.text_input("Say something to the AI:")
+    st.subheader("🤖 Interactive AI Chat")
+    st.markdown("Ask the AI any question, and it will respond with a creative answer.")
+    user_input = st.text_input("💬 Enter your question or prompt:")
     
-    if st.button("Send"):
+    if st.button("🚀 Submit"):
         if user_input:
-            with st.spinner("Generating response..."):
+            with st.spinner("🤖 AI is generating a response..."):
                 response = llama_chatbot(user_input)
-                st.markdown("### 🤖 AI Response:")
-                st.write(response)
+                if response:
+                    st.markdown("### 💡 AI Response:")
+                    st.success(f"🤖 {response}")  # Use emoji to enhance the feedback
         else:
-            st.warning("Please enter a message.")
-
-elif st.session_state.option == "Convert Text to Speech":
-    st.subheader("🔊 Convert Text to Speech")
-    text_input = st.text_area("Enter text to convert to speech:")
-    
-    if st.button("Convert"):
-        if text_input:
-            with st.spinner("Converting to speech..."):
-                audio_file = text_to_speech(text_input)
-                if audio_file:
-                    st.audio(audio_file, format="audio/mp3")
-                    os.remove(audio_file)  # Cleanup after playing
-        else:
-            st.warning("Please enter some text.")
+            st.warning("Please enter a prompt to get started!")
 
 elif st.session_state.option == "Generate an Image":
     st.subheader("🖼️ Generate an Image")
+    st.markdown("Describe the image, and we will generate it for you.")
     image_description = st.text_input("🔎 Describe the image you want:")
     
     if st.button("Generate Image"):
         if image_description:
-            with st.spinner("Generating image..."):
+            with st.spinner("🔄 Generating image..."):
                 generated_image = flux_generate_image(image_description)
                 if generated_image:
                     image = Image.open(io.BytesIO(generated_image))
                     st.image(image, caption="Generated Image", use_column_width=True)
-                else:
-                    st.error("⚠️ Unable to generate image.")
+
+elif st.session_state.option == "Convert Text to Speech":
+    st.subheader("🔊 Convert Text to Speech")
+    st.markdown("Enter text to convert it into natural-sounding speech.")
+    text_to_convert = st.text_area("📝 Enter the text you want to convert to speech:")
+    
+    if st.button("Convert"):
+        if text_to_convert:
+            with st.spinner("🔊 Converting text to speech..."):
+                audio_file = text_to_speech(text_to_convert)
+                if audio_file:
+                    st.audio(audio_file, format="audio/mp3")
+                    os.remove(audio_file)
         else:
-            st.warning("Please provide a description to generate the image.")
+            st.warning("Please enter the text to convert.")
