@@ -143,7 +143,7 @@ if st.session_state.option == "Create an Image and Story from Your Description":
                         st.write("### 🖋️ Caption (Title):", title)
 
                         with st.spinner("📖 Generating story..."):
-                            story_script = llama_chatbot(f"Write a story based on the title: {title}.")
+                            story_script = llama_chatbot(f"Write a creative and useful story about: {title}.")
                             st.markdown("### 📜 Story Script:")
                             st.write(story_script)
 
