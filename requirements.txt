@@ -4,4 +4,3 @@ Pillow
 huggingface_hub
 gtts
 transformers
-PyTorch
