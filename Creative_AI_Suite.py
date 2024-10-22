@@ -67,7 +67,7 @@ def text_to_speech(text):
 st.set_page_config(page_title="Creative AI Suite", page_icon="🎨", layout="wide")
 
 st.title("🎨 Creative AI Suite")
-st.markdown("Unlock the power of AI for *image generation, **story creation, and **speech conversion*.")
+st.markdown("Unlock the power of AI for *image generation*, *story creation*, and *speech conversion*.")
 
 # Use session state to preserve the selected option
 if 'option' not in st.session_state:
