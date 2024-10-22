@@ -71,7 +71,7 @@ def translate_to_arabic(text):
         translator = pipeline('translation_en_to_ar', model='Helsinki-NLP/opus-mt-en-ar')
         
         # Split the text into manageable chunks
-        max_length = 300
+        max_length = 500
         chunks = [text[i:i + max_length] for i in range(0, len(text), max_length)]
         
         # Translate each chunk
