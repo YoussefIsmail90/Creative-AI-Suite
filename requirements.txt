@@ -4,3 +4,7 @@ Pillow
 huggingface_hub
 gtts
 transformers
+torch 
+torchvision 
+torchaudio
+tensorflow
