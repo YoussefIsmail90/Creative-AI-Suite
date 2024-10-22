@@ -12,6 +12,7 @@ api_key = st.secrets["huggingface"]["api_key"]
 # API URLs
 blip_api_url = "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large"
 flux_api_url = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev"
+translation_api_url = "https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-en-ar"
 headers = {"Authorization": f"Bearer {api_key}"}
 
 # Meta-Llama Chatbot
@@ -63,11 +64,32 @@ def text_to_speech(text):
         st.error(f"Text-to-Speech error: {e}")
         return None
 
+# Function to translate text from English to Arabic
+# Function to translate large texts in chunks
+def translate_to_arabic(text):
+    try:
+        translator = pipeline('translation_en_to_ar', model='Helsinki-NLP/opus-mt-en-ar')
+        
+        # Split the text into manageable chunks (typically by sentence or paragraph)
+        max_length = 500  # Define a reasonable token limit for each chunk
+        chunks = [text[i:i + max_length] for i in range(0, len(text), max_length)]
+        
+        # Translate each chunk
+        translated_chunks = [translator(chunk)[0]['translation_text'] for chunk in chunks]
+        
+        # Join the translated chunks back together
+        translated_text = " ".join(translated_chunks)
+        return translated_text
+    except Exception as e:
+        st.error(f"Translation error: {e}")
+        return None
+
+
 # Enhanced Streamlit UI
 st.set_page_config(page_title="Creative AI Suite", page_icon="🎨", layout="wide")
 
 st.title("🎨 Creative AI Suite")
-st.markdown("Unlock the power of AI for *image generation*, *story creation*, and *speech conversion*.")
+st.markdown("Unlock the power of AI for **image generation**, **story creation**, and **speech conversion**.")
 
 # Use session state to preserve the selected option
 if 'option' not in st.session_state:
@@ -75,7 +97,7 @@ if 'option' not in st.session_state:
 
 # Row layout for options
 st.header("Choose an option:")
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4, col5 = st.columns(5)
 
 with col1:
     if st.button("Create an Image and Story"):
@@ -122,6 +144,14 @@ if st.session_state.option == "Create an Image and Story from Your Description":
                             st.markdown("### 📜 Story Script:")
                             st.write(story_script)
 
+                            # Translate the generated story to Arabic
+                            with st.spinner("🌍 Translating story to Arabic..."):
+                                arabic_translation = translate_to_arabic(story_script)
+                            
+                            if arabic_translation:
+                                st.markdown("### 🌍 Arabic Translation:")
+                                st.write(arabic_translation)
+
                         with st.spinner("🔊 Converting story to speech..."):
                             audio_file = text_to_speech(story_script)
 
@@ -132,46 +162,3 @@ if st.session_state.option == "Create an Image and Story from Your Description":
                         st.error("⚠️ Unable to generate caption for the image.")
         else:
             st.warning("Please provide a description to generate the image.")
-
-elif st.session_state.option == "Interactive AI Chat":
-    st.subheader("🤖 Interactive AI Chat")
-    st.markdown("Ask the AI any question, and it will respond with a creative answer.")
-    user_input = st.text_input("💬 Enter your question or prompt:")
-    
-    if st.button("🚀 Submit"):
-        if user_input:
-            with st.spinner("🤖 AI is generating a response..."):
-                response = llama_chatbot(user_input)
-                if response:
-                    st.markdown("### 💡 AI Response:")
-                    st.success(f"🤖 {response}")  # Use emoji to enhance the feedback
-        else:
-            st.warning("Please enter a prompt to get started!")
-
-elif st.session_state.option == "Generate an Image":
-    st.subheader("🖼️ Generate an Image")
-    st.markdown("Describe the image, and we will generate it for you.")
-    image_description = st.text_input("🔎 Describe the image you want:")
-    
-    if st.button("Generate Image"):
-        if image_description:
-            with st.spinner("🔄 Generating image..."):
-                generated_image = flux_generate_image(image_description)
-                if generated_image:
-                    image = Image.open(io.BytesIO(generated_image))
-                    st.image(image, caption="Generated Image", use_column_width=True)
-
-elif st.session_state.option == "Convert Text to Speech":
-    st.subheader("🔊 Convert Text to Speech")
-    st.markdown("Enter text to convert it into natural-sounding speech.")
-    text_to_convert = st.text_area("📝 Enter the text you want to convert to speech:")
-    
-    if st.button("Convert"):
-        if text_to_convert:
-            with st.spinner("🔊 Converting text to speech..."):
-                audio_file = text_to_speech(text_to_convert)
-                if audio_file:
-                    st.audio(audio_file, format="audio/mp3")
-                    os.remove(audio_file)
-        else:
-            st.warning("Please enter the text to convert.")
