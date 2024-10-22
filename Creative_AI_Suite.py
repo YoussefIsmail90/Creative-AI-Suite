@@ -106,32 +106,34 @@ if 'option' not in st.session_state:
     st.session_state.option = None  # Initialize the option
 
 # Row layout for options
+# Row layout for options
 st.header("Choose an option:")
 col1, col2, col3, col4, col5, col6 = st.columns(6)
 
 with col1:
-    if st.button("Create an Image and Story"):
+    if st.button("Create an Image and Story", key="create_image_story"):
         st.session_state.option = "Create an Image and Story from Your Description"
 
 with col2:
-    if st.button("Interactive AI Chat"):
+    if st.button("Interactive AI Chat", key="interactive_ai_chat"):
         st.session_state.option = "Interactive AI Chat"
 
 with col3:
-    if st.button("Convert Text to Speech"):
+    if st.button("Convert Text to Speech", key="convert_text_to_speech"):
         st.session_state.option = "Convert Text to Speech"
 
 with col4:
-    if st.button("Generate an Image"):
+    if st.button("Generate an Image", key="generate_image"):
         st.session_state.option = "Generate an Image"
 
 with col5:
-    if st.button("Translate to Arabic"):
+    if st.button("Translate to Arabic", key="translate_to_arabic"):
         st.session_state.option = "Translate to Arabic"
 
 with col6:
-    if st.button("Generate Music"):
+    if st.button("Generate Music", key="generate_music"):
         st.session_state.option = "Generate Music"
+
 
 # Add help tooltips to guide users
 st.info("Select an option to interact with the AI tools.")
