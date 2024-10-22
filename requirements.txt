@@ -7,4 +7,3 @@ transformers
 torch 
 torchvision 
 torchaudio
-tensorflow
