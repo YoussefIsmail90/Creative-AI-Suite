@@ -5,6 +5,7 @@ import io
 from huggingface_hub import InferenceClient
 from gtts import gTTS
 import os
+from transformers import pipeline
 
 # Hugging Face API keys and endpoints
 api_key = st.secrets["huggingface"]["api_key"]  
