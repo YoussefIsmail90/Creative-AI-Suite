@@ -85,7 +85,6 @@ def translate_to_arabic(text):
         st.error(f"Translation error: {e}")
         return None
 
-
 # Enhanced Streamlit UI
 st.set_page_config(page_title="Creative AI Suite", page_icon="🎨", layout="wide")
 
@@ -98,7 +97,7 @@ if 'option' not in st.session_state:
 
 # Row layout for options
 st.header("Choose an option:")
-col1, col2, col3, col4, col5 = st.columns(5)
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     if st.button("Create an Image and Story"):
@@ -161,5 +160,48 @@ if st.session_state.option == "Create an Image and Story from Your Description":
                             os.remove(audio_file)  # Cleanup after playing
                     else:
                         st.error("⚠️ Unable to generate caption for the image.")
+        else:
+            st.warning("Please provide a description to generate the image.")  
+
+elif st.session_state.option == "Interactive AI Chat":
+    st.subheader("💬 Interactive AI Chat")
+    user_input = st.text_input("Say something to the AI:")
+    
+    if st.button("Send"):
+        if user_input:
+            with st.spinner("Generating response..."):
+                response = llama_chatbot(user_input)
+                st.markdown("### 🤖 AI Response:")
+                st.write(response)
+        else:
+            st.warning("Please enter a message.")
+
+elif st.session_state.option == "Convert Text to Speech":
+    st.subheader("🔊 Convert Text to Speech")
+    text_input = st.text_area("Enter text to convert to speech:")
+    
+    if st.button("Convert"):
+        if text_input:
+            with st.spinner("Converting to speech..."):
+                audio_file = text_to_speech(text_input)
+                if audio_file:
+                    st.audio(audio_file, format="audio/mp3")
+                    os.remove(audio_file)  # Cleanup after playing
+        else:
+            st.warning("Please enter some text.")
+
+elif st.session_state.option == "Generate an Image":
+    st.subheader("🖼️ Generate an Image")
+    image_description = st.text_input("🔎 Describe the image you want:")
+    
+    if st.button("Generate Image"):
+        if image_description:
+            with st.spinner("Generating image..."):
+                generated_image = flux_generate_image(image_description)
+                if generated_image:
+                    image = Image.open(io.BytesIO(generated_image))
+                    st.image(image, caption="Generated Image", use_column_width=True)
+                else:
+                    st.error("⚠️ Unable to generate image.")
         else:
             st.warning("Please provide a description to generate the image.")
