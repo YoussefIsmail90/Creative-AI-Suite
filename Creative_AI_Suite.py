@@ -8,7 +8,7 @@ import os
 from transformers import pipeline
 
 # Hugging Face API keys and endpoints
-api_key = st.secrets["huggingface"]["api_key"]  
+api_key = st.secrets["huggingface"]["api_key"]
 
 # API URLs
 blip_api_url = "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large"
@@ -66,13 +66,12 @@ def text_to_speech(text):
         return None
 
 # Function to translate text from English to Arabic
-# Function to translate large texts in chunks
 def translate_to_arabic(text):
     try:
         translator = pipeline('translation_en_to_ar', model='Helsinki-NLP/opus-mt-en-ar')
         
-        # Split the text into manageable chunks (typically by sentence or paragraph)
-        max_length = 300  # Define a reasonable token limit for each chunk
+        # Split the text into manageable chunks
+        max_length = 300
         chunks = [text[i:i + max_length] for i in range(0, len(text), max_length)]
         
         # Translate each chunk
@@ -97,7 +96,7 @@ if 'option' not in st.session_state:
 
 # Row layout for options
 st.header("Choose an option:")
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4, col5 = st.columns(5)
 
 with col1:
     if st.button("Create an Image and Story"):
@@ -114,6 +113,10 @@ with col3:
 with col4:
     if st.button("Generate an Image"):
         st.session_state.option = "Generate an Image"
+
+with col5:
+    if st.button("Translate to Arabic"):
+        st.session_state.option = "Translate to Arabic"
 
 # Add help tooltips to guide users
 st.info("Select an option to interact with the AI tools.")
@@ -148,6 +151,7 @@ if st.session_state.option == "Create an Image and Story from Your Description":
                             with st.spinner("🌍 Translating story to Arabic..."):
                                 arabic_translation = translate_to_arabic(story_script)
                             
+
                             if arabic_translation:
                                 st.markdown("### 🌍 Arabic Translation:")
                                 st.write(arabic_translation)
@@ -205,3 +209,18 @@ elif st.session_state.option == "Convert Text to Speech":
                     os.remove(audio_file)
         else:
             st.warning("Please enter the text to convert.")
+
+elif st.session_state.option == "Translate to Arabic":
+    st.subheader("🌍 Translate Text to Arabic")
+    st.markdown("Enter the text you want to translate from English to Arabic.")
+    text_to_translate = st.text_area("📝 Enter the text you want to translate:")
+    
+    if st.button("Translate"):
+        if text_to_translate:
+            with st.spinner("🌍 Translating text..."):
+                arabic_translation = translate_to_arabic(text_to_translate)
+                if arabic_translation:
+                    st.markdown("### 🌍 Arabic Translation:")
+                    st.write(arabic_translation)
+        else:
+            st.warning("Please enter text to translate.")
