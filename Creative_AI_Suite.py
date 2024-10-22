@@ -12,7 +12,7 @@ api_key = st.secrets["huggingface"]["api_key"]
 
 # API URLs
 blip_api_url = "https://api-inference.huggingface.co/models/nlpconnect/vit-gpt2-image-captioning"
-flux_api_url = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev"
+flux_api_url = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1"
 translation_api_url = "https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-en-ar"
 headers = {"Authorization": f"Bearer {api_key}"}
 
